@@ -1,0 +1,167 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Miss Universe Journey</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #f8b6d2, #fcd5ce);
+      text-align: center;
+      padding: 30px;
+      color: #333;
+    }
+    .screen { display: none; }
+    .active { display: block; }
+    button {
+      padding: 12px 24px;
+      margin: 15px;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
+      background-color: #ff69b4;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #ff85c1;
+    }
+    input {
+      padding: 10px;
+      margin: 10px;
+      width: 250px;
+      border: 2px solid #ff69b4;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+    .result {
+      font-size: 20px;
+      margin-top: 20px;
+      font-weight: bold;
+      color: #d6336c;
+    }
+    .question-btns button {
+      display: block;
+      margin: 10px auto;
+      width: 60%;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="home" class="screen active">
+    <h1>Miss Universe Journey</h1>
+    <button onclick="showScreen('create')">Start Your Journey</button>
+  </div>
+
+  <div id="create" class="screen">
+    <h2>Create Your Character</h2>
+    <input id="name" placeholder="Your Name" /><br>
+    <input id="country" placeholder="Country" /><br>
+    <button onclick="startJourney()">Continue</button>
+  </div>
+
+  <div id="prelims" class="screen">
+    <h2>Preliminary Competition</h2>
+    <p>You walked in swimwear and evening gown...</p>
+    <button onclick="evaluateRound(20)">See if you made Top 20</button>
+    <p id="result20" class="result"></p>
+  </div>
+
+  <div id="top10" class="screen">
+    <h2>Top 20 Round</h2>
+    <p>Runway + Warm-up Q&A...</p>
+    <button onclick="evaluateRound(10)">See if you made Top 10</button>
+    <p id="result10" class="result"></p>
+  </div>
+
+  <div id="top5" class="screen">
+    <h2>Top 10 Round</h2>
+    <p>National Costume Presentation!</p>
+    <button onclick="evaluateRound(5)">See if you made Top 5</button>
+    <p id="result5" class="result"></p>
+  </div>
+
+  <div id="qa" class="screen">
+    <h2>Final Q&A</h2>
+    <p>Choose a question to answer:</p>
+    <div class="question-btns">
+      <button onclick="answerQuestion('What makes you unique?')">Q1: What makes you unique?</button>
+      <button onclick="answerQuestion('How would you promote peace in the world?')">Q2: How would you promote peace?</button>
+      <button onclick="answerQuestion('Describe beauty in one word and why.')">Q3: Describe beauty in one word</button>
+    </div>
+    <p id="answer" class="result"></p>
+    <button onclick="showFinalResult()">See Final Results</button>
+  </div>
+
+  <div id="finale" class="screen">
+    <h2>Final Results</h2>
+    <p class="result" id="finalResult"></p>
+    <button onclick="location.reload()">Play Again</button>
+  </div>
+
+  <script>
+    let playerName = "";
+    let playerCountry = "";
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    }
+
+    function startJourney() {
+      const name = document.getElementById('name').value.trim();
+      const country = document.getElementById('country').value.trim();
+      if (name && country) {
+        playerName = name;
+        playerCountry = country;
+        showScreen('prelims');
+      } else {
+        alert("Please enter both name and country.");
+      }
+    }
+
+    function evaluateRound(target) {
+      const passed = Math.random() > 0.4;
+      const resultId = {
+        20: "result20",
+        10: "result10",
+        5: "result5"
+      }[target];
+
+      const resultMsg = passed
+        ? `Congratulations ${playerName} from ${playerCountry}, you made it to the Top ${target}!`
+        : `Unfortunately, you didn’t make it to the Top ${target}. Better luck next time!`;
+
+      document.getElementById(resultId).textContent = resultMsg;
+
+      setTimeout(() => {
+        if (passed) {
+          if (target === 20) showScreen('top10');
+          if (target === 10) showScreen('top5');
+          if (target === 5) showScreen('qa');
+        } else {
+          showScreen('finale');
+          document.getElementById('finalResult').textContent = `You gave it your all, ${playerName}. Great effort representing ${playerCountry}!`;
+        }
+      }, 2000);
+    }
+
+    function answerQuestion(text) {
+      document.getElementById('answer').textContent = `You answered: "${text}" with grace and confidence!`;
+    }
+
+    function showFinalResult() {
+      showScreen('finale');
+      const winner = Math.random() > 0.5;
+      const message = winner
+        ? `Crowning Moment: Congratulations ${playerName}, you are the new MISS UNIVERSE!`
+        : `${playerName}, you made it to the finals! A star in the making!`;
+      document.getElementById('finalResult').textContent = message;
+    }
+  </script>
+
+</body>
+</html>
